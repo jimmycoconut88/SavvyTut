@@ -3,7 +3,7 @@
 ########################################################################
 
 # Compiler settings - Can be customized.
-CC = g++
+CC = g++ -g -lncurses
 CXXFLAGS = -std=c++11 -Wall
 LDFLAGS = 
 

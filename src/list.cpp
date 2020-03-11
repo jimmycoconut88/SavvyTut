@@ -3,73 +3,128 @@
 
 
 
-void List::print_menu(){
-    int choice;
-    cout<< "**********\n";
-    cout<< " 1 - Print List.\n";
-    cout<< " 2 - Add to list,\n";
-    cout<< " 3 - Delete from list\n";
-    cout<< " 4 - Quit.\n";
-    cout<<" Enter your choice and press return: ";
+void List::print_menu(WINDOW* win,WINDOW* outputwin){
+    int choice,highlight = 0;
+    keypad(win, true);         // help to identify KEY_UP or KEY_F
+    wclear(win);
+    box(win,0,0);
+    string choices[4] = {"1 - Print List","2 - Add to List","3 - Delete from List","4 - Quit"};
 
-    cin >> choice;
-    if( choice == 4){
-        return;
+    //mvwprintw(win,6,1," Enter your choice and press return: ");
+    wrefresh(win);
+    wrefresh(outputwin);
+while(1){   // This while loop means that every loop it print out all option with one thats highlighted
+                //
+        for(int i = 0;i<4;i++){     //Print out all option normally except highlight the one needed
+            if(i == highlight)  wattron(win,A_REVERSE);
+            mvwprintw(win,i+1,1, choices[i].c_str());
+            wclear(outputwin);
+            box(outputwin,0,0);
+            mvwprintw(outputwin,1,1,"You Choice: %s",choices[highlight].c_str());
+            wrefresh(outputwin);
+            wattroff(win,A_REVERSE);
     }
-    else if(choice == 2){
-        add_item();
+    choice = wgetch(win);   //Current cursor position 
+    
+    switch(choice){
+        case KEY_UP:
+            highlight--;
+            if(highlight == -1) highlight = 0;
+            break;
+        case KEY_DOWN:
+            highlight++;
+            if(highlight == 4) highlight = 3;
+            break;
+        default:
+            break;
     }
-    else if(choice == 3){
-        delete_item();
+    if(choice == 10)    //10 == pressing enter
+        break;
+    
     }
-    else if(choice == 1){
-        print_list();
-    }
-    else{
-        cout << "Sorry choice not implemented\n";
+    switch(highlight){
+        case 0:
+            print_list(win,outputwin);
+            break;
+        case 1:
+            add_item(win,outputwin);
+            break;
+        case 2:
+            delete_item(win,outputwin);
+            break;
+        default:
+            return;
+        
     }
 }
 
-void List::add_item(){
-    cout<<"\n\n\n\n\n\n\n";
-    cout<<"*****Add Item*****\n";
-    cout<< "Type in an item and press enter: ";
+void List::add_item(WINDOW* win,WINDOW* outputwin){
+    wclear(win);
+    wclear(outputwin);
+    box(win,0,0);
+    box(outputwin,0,0);
+    mvwprintw(outputwin,1,1,"*****Add Item*****");
+    mvwprintw(outputwin,2,1,"Type in an item and press enter: ");
+    wrefresh(outputwin);
 
-    string item;
-    cin>>item;
+    char item[50]={};
+    wgetstr(outputwin,item);
     list.push_back(item);
-    cout<<"Successfully added item to list \n\n\n\n\n";
+    wprintw(win,"Successfully added item to list \n\n\n\n\n");
     cin.clear();
-    print_menu();
+    print_menu(win,outputwin);
 }
-void List::delete_item(){
-    cout<<"**** Delete Item ****\n";
-    cout<< "Select an item index number to delete\n";
+void List::delete_item(WINDOW* win,WINDOW* outputwin){
+    keypad(win,true);
+    wclear(win);
+    box(win,0,0);
+    mvwprintw(win,1,1,"**** Delete Item ****");
+    mvwprintw(win,2,1,"Select an item index number to delete");
+    int choiceNum,highlight=0;
     if(list.size()){
-        for(int i = 0;i<(int)list.size();i++){
-            cout << i << ": " << list[i] << "\n";
+        while(1){
+           // wrefresh(win);
+            for(int i = 0;i<(int)list.size();i++){        
+                if(i == highlight)  wattron(win,A_REVERSE);
+                mvwprintw(win,i+3,1, list[i].c_str());
+                wattroff(win,A_REVERSE);
+            }
+            choiceNum = wgetch(win);
+    
+            switch(choiceNum){
+                case KEY_UP:
+                    highlight--;
+                    if(highlight == -1) highlight = 0;
+                    break;
+                case KEY_DOWN:
+                    highlight++;
+                    if(highlight == 3) highlight = 2;
+                    break;
+                default:
+                    break;
+            }
+            if(choiceNum == 10) break;
         }
-        int choiceNum;
-        cin >>choiceNum;
         list.erase(list.begin()+choiceNum);
     }
     else{
-        cout << "No items to delete.\n";
+        wprintw(win,"No items to delete.\n");
     }
-    print_menu();
+    print_menu(win,outputwin);
 }
 
-void List::print_list(){
-    cout<< "\n\n\n\n\n";
-    cout<<"**** Printing List ****\n";
+void List::print_list(WINDOW* win,WINDOW* outputwin){
+    wclear(win);
+    box(win,0,0);
+    mvwprintw(win,1,1,"**** Printing List ****");
     for(int list_index=0;list_index<(int)list.size();list_index++){
-        cout<<"* "<< list[list_index] << "\n";       
+        mvwprintw(win,list_index+2,1,"* %s", list[list_index].c_str());       
     }
-
-    cout << "M - Menu \n";
+   //wprintw(win,"M - Menu \n");
+   wrefresh(win);
     char choice;
     cin >> choice;
 
-    if( choice == 'M' || choice == 'm') print_menu();
-    else cout<<"Invalid Choice. Quitting..\n";
+    if( choice == 'M' || choice == 'm') print_menu(win,outputwin);
+    else wprintw(win,"Invalid Choice. Quitting..\n");
 }

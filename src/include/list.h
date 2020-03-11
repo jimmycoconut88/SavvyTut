@@ -1,5 +1,7 @@
 #include<iostream>
 #include<vector>
+#include<stdio.h>
+#include<ncurses.h>
 using namespace std;
 
 
@@ -19,9 +21,9 @@ class List {
     string name;
     vector<string> list;
 
-    void print_menu();
-    void print_list();
-    void add_item();
-    void delete_item();
+    void print_menu(WINDOW* win,WINDOW* outputwin);
+    void print_list(WINDOW* win,WINDOW* outputwin);
+    void add_item(WINDOW* win,WINDOW* outputwin);
+    void delete_item(WINDOW* win,WINDOW* outputwin);
 
 };
