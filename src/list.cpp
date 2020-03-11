@@ -105,7 +105,7 @@ void List::delete_item(WINDOW* win,WINDOW* outputwin){
             }
             if(choiceNum == 10) break;
         }
-        list.erase(list.begin()+choiceNum);
+        list.erase(list.begin()+highlight);
     }
     else{
         wprintw(win,"No items to delete.\n");
