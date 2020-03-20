@@ -22,7 +22,7 @@ int main(int arg_count, char *args[])
         simplelist.name = string(args[1]);
         simplelist.mainList = data.read();
 
-        WINDOW *win = newwin(20, xmax - 12, ymax - 30, 5);
+        WINDOW *win = newwin(20, xmax - 12, ymax - ymax + 5, 5);
         box(win, 0, 0);
         refresh();
         wrefresh(win);
