@@ -83,7 +83,11 @@ void List::delete_item(WINDOW *win, WINDOW *outputwin)
 {
     keypad(win, true);
     wclear(win);
+    wclear(outputwin);
     box(win, 0, 0);
+    box(outputwin, 0, 0);
+    mvwprintw(outputwin, 1, 1, "*****Delete Item*****");
+
     mvwprintw(win, 1, 1, "**** Delete Item ****");
     mvwprintw(win, 2, 1, "Select an item index number to delete");
     int choiceNum, highlight = 0;
@@ -92,6 +96,7 @@ void List::delete_item(WINDOW *win, WINDOW *outputwin)
         while (1)
         {
             // wrefresh(win);
+            wrefresh(outputwin);
             for (int i = 0; i < (int)list.size(); i++)
             {
                 if (i == highlight)
@@ -100,7 +105,8 @@ void List::delete_item(WINDOW *win, WINDOW *outputwin)
                 wattroff(win, A_REVERSE);
             }
             choiceNum = wgetch(win);
-
+            mvwprintw(outputwin, 2, 1, "                                   ");
+            wrefresh(outputwin);
             switch (choiceNum)
             {
             case KEY_UP:
@@ -110,14 +116,15 @@ void List::delete_item(WINDOW *win, WINDOW *outputwin)
                 break;
             case KEY_DOWN:
                 highlight++;
-                if (highlight == 3)
-                    highlight = 2;
+                if (highlight == (int)list.size())
+                    highlight = (int)list.size() - 1;
                 break;
             default:
                 break;
             }
             if (choiceNum == 10)
                 break;
+            mvwprintw(outputwin, 2, 1, "Delete item: %s ", list[highlight].c_str());
         }
         list.erase(list.begin() + highlight);
     }
