@@ -1,26 +1,23 @@
-#include<iostream>
-#include<vector>
-#include<fstream>
+#include <iostream>
+#include <vector>
+#include <fstream>
 using namespace std;
 
-
-class Database {
-    private:
-    
-    protected:
-    
-    public:
-    Database(){
-
+class Database
+{
+private:
+protected:
+public:
+    Database()
+    {
     }
-    ~Database(){
-
+    ~Database()
+    {
     }
 
     string name;
-    vector<string> list;
+    vector<vector<string>> mainList;
 
-    void write(vector<string>list);
-    void read();
-
+    void write(vector<vector<string>> mainList);
+    vector<vector<string>> read();
 };

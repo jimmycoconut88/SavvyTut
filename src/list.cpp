@@ -154,3 +154,33 @@ void List::print_list(WINDOW *win, WINDOW *outputwin)
     else
         wprintw(win, "Invalid Choice. Quitting..\n");
 }
+
+void List::find_userList(WINDOW *win, WINDOW *outputwin)
+{
+    bool userFind = false;
+    wclear(outputwin);
+    box(outputwin, 0, 0);
+    mvwprintw(outputwin, 1, 1, "*****Welcome %s ****", name.c_str());
+
+    for (int user_index = 0; user_index < (int)mainList.size(); user_index++)
+    {
+        //mvwprintw(win, user_index + 2, 1, "%s", mainList[user_index][0].c_str());
+        //cout << mainList[user_index][0] << "\n";
+        if (mainList[user_index][0] == name)
+        {
+            mvwprintw(outputwin, 2, 1, "User has been found: %s", mainList[user_index][0].c_str());
+            //cout << " user has been found: " << mainList[user_index][0] << "\n";
+            list = mainList[user_index];
+            userFind = true;
+            break;
+        }
+        else
+        {
+            mvwprintw(outputwin, 2, 1, "Welcome new User");
+        }
+    }
+    mvwprintw(win, 1, 1, "Press Enter to Continue");
+    wrefresh(outputwin);
+    wrefresh(win);
+    getch();
+}
