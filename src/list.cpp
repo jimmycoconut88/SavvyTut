@@ -7,7 +7,7 @@ void List::print_menu(WINDOW *win, WINDOW *outputwin)
     wclear(win);
     box(win, 0, 0);
     box(outputwin, 0, 0);
-    string choices[4] = {"1 - Print List", "2 - Add to List", "3 - Delete from List", "4 - Quit"};
+    string choices[5] = {"1 - Print List", "2 - Add to List", "3 - Delete from List", "4 - Save List", "5 - Quit"};
 
     //mvwprintw(win,6,1," Enter your choice and press return: ");
     wrefresh(win);
@@ -15,7 +15,7 @@ void List::print_menu(WINDOW *win, WINDOW *outputwin)
     while (1)
     { // This while loop means that every loop it print out all option with one thats highlighted
         //
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         { //Print out all option normally except highlight the one needed
             if (i == highlight)
                 wattron(win, A_REVERSE);
@@ -37,8 +37,8 @@ void List::print_menu(WINDOW *win, WINDOW *outputwin)
             break;
         case KEY_DOWN:
             highlight++;
-            if (highlight == 4)
-                highlight = 3;
+            if (highlight == 5)
+                highlight = 4;
             break;
         default:
             break;
@@ -57,6 +57,8 @@ void List::print_menu(WINDOW *win, WINDOW *outputwin)
     case 2:
         delete_item(win, outputwin);
         break;
+    case 3:
+        save_list(win, outputwin);
     default:
         return;
     }
@@ -89,7 +91,7 @@ void List::delete_item(WINDOW *win, WINDOW *outputwin)
     mvwprintw(outputwin, 1, 1, "*****Delete Item*****");
 
     mvwprintw(win, 1, 1, "**** Delete Item ****");
-    mvwprintw(win, 2, 1, "Select an item index number to delete");
+    mvwprintw(win, 2, 1, "Select an item index number to delete (Delete first item to rename)");
     int choiceNum, highlight = 0;
     if (list.size())
     {
@@ -120,11 +122,14 @@ void List::delete_item(WINDOW *win, WINDOW *outputwin)
                     highlight = (int)list.size() - 1;
                 break;
             default:
+                return print_menu(win, outputwin);
                 break;
             }
             if (choiceNum == 10)
+            {
                 break;
-            mvwprintw(outputwin, 2, 1, "Delete item: %s ", list[highlight].c_str());
+                mvwprintw(outputwin, 2, 1, "Delete item: %s ", list[highlight].c_str());
+            }
         }
         list.erase(list.begin() + highlight);
     }
@@ -139,7 +144,7 @@ void List::print_list(WINDOW *win, WINDOW *outputwin)
 {
     wclear(win);
     box(win, 0, 0);
-    mvwprintw(win, 1, 1, "**** Printing List ****");
+    mvwprintw(win, 1, 1, "**** Printing List( M - Escape ) ****");
     for (int list_index = 0; list_index < (int)list.size(); list_index++)
     {
         mvwprintw(win, list_index + 2, 1, "* %s", list[list_index].c_str());
@@ -155,7 +160,7 @@ void List::print_list(WINDOW *win, WINDOW *outputwin)
         wprintw(win, "Invalid Choice. Quitting..\n");
 }
 
-void List::find_userList(WINDOW *win, WINDOW *outputwin)
+bool List::find_userList(WINDOW *win, WINDOW *outputwin)
 {
     bool userFind = false;
     wclear(outputwin);
@@ -171,16 +176,27 @@ void List::find_userList(WINDOW *win, WINDOW *outputwin)
             mvwprintw(outputwin, 2, 1, "User has been found: %s", mainList[user_index][0].c_str());
             //cout << " user has been found: " << mainList[user_index][0] << "\n";
             list = mainList[user_index];
+            currentUserIndex = user_index;
             userFind = true;
             break;
         }
-        else
-        {
-            mvwprintw(outputwin, 2, 1, "Welcome new User");
-        }
+    }
+    if (userFind == false)
+    {
+        mvwprintw(outputwin, 2, 1, "Welcome new User");
+        list.push_back(name);
+        mainList.push_back(list);
+        currentUserIndex = (int)mainList.size() - 1;
     }
     mvwprintw(win, 1, 1, "Press Enter to Continue");
     wrefresh(outputwin);
     wrefresh(win);
     getch();
+    return userFind;
+}
+void List::save_list(WINDOW *win, WINDOW *outputwin)
+{
+    cout << "Saving the list...\n";
+    mainList[currentUserIndex] = list;
+    print_menu(win, outputwin);
 }

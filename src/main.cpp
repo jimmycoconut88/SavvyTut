@@ -6,7 +6,6 @@ int main(int arg_count, char *args[])
 
     List simplelist;
     Database data;
-    data.read();
     if (arg_count > 1)
     {
         //string name(args[1]);
@@ -30,10 +29,8 @@ int main(int arg_count, char *args[])
         simplelist.find_userList(win, outputwin);
         simplelist.print_menu(win, outputwin);
         wrefresh(win);
+        data.write(simplelist.mainList);
 
-        //data.write(simplelist.list);
-
-        getch();
         endwin();
     }
     else
